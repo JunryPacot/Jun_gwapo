@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Raining Matrix Effect</title>
+  <style>
+    /* Reset margins and paddings */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Set the background color to black */
+    body {
+      background: #000;
+      overflow: hidden; /* Hide scrollbars */
+    }
+
+    /* Make the canvas fill the entire window */
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas></canvas>
+
+  <script>
+    // Select the canvas element and get its 2D context
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set the canvas dimensions to match the window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initializeDrops(); // Reinitialize drops on resize
+    });
+
+    // Define the characters to be used in the rain effect
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lettersArray = letters.split('');
+
+    // Set the font size and calculate the number of columns
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+
+    // Initialize the drops array, one for each column
+    let drops = [];
+
+    function initializeDrops() {
+      drops = [];
+      for (let i = 0; i < columns; i++) {
+        drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
+      }
+    }
+
+    initializeDrops();
+
+    // Set the font properties
+    ctx.font = `${fontSize}px monospace`;
+
+    // Draw function to render the rain effect
+    function draw() {
+      // Semi-transparent black background to create the fade effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Set the text color to green
+      ctx.fillStyle = '#0F0';
+
+      // Loop through each drop
+      for (let i = 0; i < drops.length; i++) {
+        // Select a random character from the letters array
+        const text = lettersArray[Math.floor(Math.random() * lettersArray.length)];
+
+        // Draw the character at the current drop position
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        // Move the drop down by one
+        drops[i]++;
+
+        // Reset the drop to the top randomly after it has moved off the screen
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+      }
+    }
+
+    // Set the animation loop to run approximately 30 times per second
+    setInterval(draw, 33);
+  </script>
+</body>
+  </html>
